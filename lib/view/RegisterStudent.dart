@@ -1,7 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:kazoku_switch/helper/DatabaseHelper.dart';
 import 'package:kazoku_switch/model/colorModel.dart';
 import 'package:kazoku_switch/model/month.dart';
+import 'package:kazoku_switch/model/registerData.dart';
 import 'package:multiselect_formfield/multiselect_formfield.dart';
 import 'package:kazoku_switch/model/ca.dart';
 
@@ -30,7 +34,7 @@ class _MyHomePageState extends State<RegisterStudent> {
   final TextStyle textstyle =
       TextStyle(color: Colors.white, fontWeight: FontWeight.bold);
   final InputDecoration decoration =
-      InputDecoration(border: OutlineInputBorder(), hintText: 'Họ tên: ');
+      InputDecoration(border: OutlineInputBorder(), labelText: 'Họ tên: ');
   final _formKey = GlobalKey<FormState>();
 
   TextEditingController fullNameController = TextEditingController();
@@ -42,6 +46,7 @@ class _MyHomePageState extends State<RegisterStudent> {
   String _myActivitiesResult;
   final formKey = new GlobalKey<FormState>();
   String _fruit = '';
+  int possion;
 
   _saveForm() {
     var form = formKey.currentState;
@@ -49,6 +54,7 @@ class _MyHomePageState extends State<RegisterStudent> {
       form.save();
       setState(() {
         _myActivitiesResult = _myActivities.toString();
+
       });
     }
   }
@@ -64,7 +70,7 @@ class _MyHomePageState extends State<RegisterStudent> {
     Ca(name: 'CN', isSelect: false, monthName: ""),
   ];
   List<colorModel> colorsModelList = [
-    colorModel(colors:Colors.white60,isSelect: false ),
+    colorModel(colors:Colors.white,isSelect: false ),
     colorModel(colors:Colors.yellow,isSelect: false ),
     colorModel(colors:Colors.orange,isSelect: false ),
     colorModel(colors:Colors.green,isSelect: false ),
@@ -88,6 +94,7 @@ class _MyHomePageState extends State<RegisterStudent> {
     });
   }
   _onSelectedColor(int index) {
+    possion = index;
     for(int i = 0; i<colorsModelList.length;i++){
         if(i ==  index){
           colorsModelList[i].isSelect = true;
@@ -172,7 +179,7 @@ class _MyHomePageState extends State<RegisterStudent> {
 
     // set up the SimpleDialog
     SimpleDialog dialog = SimpleDialog(
-      title: const Text('Choose an animal'),
+      title: const Text('Chọn ca'),
 
       children: <Widget>[
         optionOne,
@@ -239,7 +246,7 @@ class _MyHomePageState extends State<RegisterStudent> {
                       return null;
                     },
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'Năm sinh: '),
+                        border: OutlineInputBorder(), labelText: 'Năm sinh: '),
                   ),
                   SizedBox(
                     width: double.infinity,
@@ -256,7 +263,7 @@ class _MyHomePageState extends State<RegisterStudent> {
                     },
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
-                        hintText: 'Số điện thoại phụ huynh: '),
+                        labelText: 'Số điện thoại phụ huynh: '),
                   ),
                   SizedBox(
                     width: double.infinity,
@@ -272,7 +279,7 @@ class _MyHomePageState extends State<RegisterStudent> {
                       return null;
                     },
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'Địa chỉ: '),
+                        border: OutlineInputBorder(), labelText: 'Địa chỉ: '),
                   ),
                   SizedBox(
                     width: double.infinity,
@@ -282,7 +289,7 @@ class _MyHomePageState extends State<RegisterStudent> {
                     controller: noteController,
                     autofocus: false,
                     decoration: InputDecoration(
-                        border: OutlineInputBorder(), hintText: 'Ghi chú '),
+                        border: OutlineInputBorder(), labelText: 'Ghi chú '),
                   ),
                   Container(
                     alignment: Alignment.centerLeft,
@@ -445,6 +452,7 @@ class _MyHomePageState extends State<RegisterStudent> {
                   ),
                   Container(
                     alignment: Alignment.center,
+                    margin: EdgeInsets.only(bottom: 10.0),
                     child: SizedBox(
                       // Horizontal ListView
                         height: 50.0,
@@ -510,17 +518,26 @@ class _MyHomePageState extends State<RegisterStudent> {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(vertical: 16.0),
+
                     child: RaisedButton(
+
                       onPressed: () {
                         // Validate returns true if the form is valid, or false
                         // otherwise.
+                        String jsonUser = jsonEncode(listCa);
+                       // String jsoncolof = jsonEncode(colorsModelList);
+                        //print("listtttttt"+jsoncolof);
                         _saveForm();
                         if (_formKey.currentState.validate()) {
                           // If the form is valid, display a Snackbar.
                           print('aaaaaa ' + fullNameController.text.toString());
+                          _saveTodo(fullNameController.text.toString(),doBController.text.toString());
                         }
                       },
-                      child: Text('Submit'),
+                      child: Text('Ghi danh',style: TextStyle(color: Colors.white.withOpacity(1.0)),),
+                      color: Colors.blue,
+
+
                     ),
                   ),
                 ],
@@ -528,4 +545,20 @@ class _MyHomePageState extends State<RegisterStudent> {
             ))),backgroundColor: Colors.white,
     );
   }
+  _saveTodo(String fullName, String dob) async {
+
+      DatabaseHelper.instance.insertDataStudent(RegisterData(
+          dob: dob,
+          name: fullName,
+          phone:phoneController.text.toString(),
+          address: addressController.text.toString(),
+          note: noteController.text.toString(),
+          listHP: jsonEncode(_myActivities),
+          listca: jsonEncode(listCa),
+          listcolor: possion.toString()
+      ));
+      print('save thanh cong');
+  }
 }
+
+
