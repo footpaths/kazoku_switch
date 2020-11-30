@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:kazoku_switch/model/CounterModel.dart';
 import 'package:kazoku_switch/presenter/Presenter.dart';
 import 'package:kazoku_switch/view/Counter.dart';
+import 'package:kazoku_switch/view/ListStudent.dart';
 import 'package:kazoku_switch/view/RegisterStudent.dart';
 
 
@@ -92,6 +93,7 @@ class _MyHomePageState extends State<HomePage> implements Counter {
                 child: InkWell(
                   onTap: (){
                     print('hihihihi');
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => ListStudent()));
                   },
                   splashColor: Colors.green,
                   child: Center(

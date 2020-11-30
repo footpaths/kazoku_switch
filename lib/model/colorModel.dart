@@ -8,6 +8,10 @@ class colorModel {
 
   colorModel({ this.colors, this.isSelect});
 
+  Map toJson() => {
+    'colors': colors,
+    'isSelect': isSelect,
 
+  };
 
 }
