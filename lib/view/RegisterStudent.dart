@@ -1,7 +1,9 @@
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:kazoku_switch/helper/DatabaseHelper.dart';
 import 'package:kazoku_switch/model/colorModel.dart';
 import 'package:kazoku_switch/model/month.dart';
@@ -15,6 +17,7 @@ class RegisterStudent extends StatefulWidget {
 
   final String title;
 
+
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
@@ -26,6 +29,7 @@ class _MyHomePageState extends State<RegisterStudent> {
   //   print('UTC Time: ${now.toString('dddd yyyy-MM-dd HH:mm')}');
   //
   // }
+  String formattedDates;
   @override
   void initState() {
     super.initState();
@@ -33,6 +37,9 @@ class _MyHomePageState extends State<RegisterStudent> {
     _myActivities = [];
     _myActivitiesResult = '';
    // example();
+    DateTime now = DateTime.now();
+    formattedDates = DateFormat('yyyy-MM-dd kk:mm').format(now);
+    print('dateeeee: $formattedDates');
   }
   void _onFocusChange(){
     debugPrint("Focus: "+_focus.hasFocus.toString());
@@ -47,6 +54,7 @@ class _MyHomePageState extends State<RegisterStudent> {
   TextEditingController fullNameController = TextEditingController();
   TextEditingController doBController = TextEditingController();
   TextEditingController phoneController = TextEditingController();
+  TextEditingController phoneController2 = TextEditingController();
   TextEditingController addressController = TextEditingController();
   TextEditingController noteController = TextEditingController();
   List _myActivities;
@@ -198,6 +206,7 @@ class _MyHomePageState extends State<RegisterStudent> {
         optionThree,
         optionFour,
         optionFive,
+        optionSix,
       ],
     );
 
@@ -279,6 +288,19 @@ class _MyHomePageState extends State<RegisterStudent> {
                     decoration: InputDecoration(
                         border: OutlineInputBorder(),
                         labelText: 'Số điện thoại phụ huynh: '),
+                  ),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 10.0,
+                  ),
+                  TextFormField(
+                    controller: phoneController2,
+                    autofocus: false,
+                    keyboardType: TextInputType.phone,
+
+                    decoration: InputDecoration(
+                        border: OutlineInputBorder(),
+                        labelText: 'Số điện thoại phụ huynh 2: '),
                   ),
                   SizedBox(
                     width: double.infinity,
@@ -572,8 +594,12 @@ class _MyHomePageState extends State<RegisterStudent> {
                           _saveTodo(fullNameController.text.toString(),doBController.text.toString());
                         }
                       },
-                      child: Text('Ghi danh',style: TextStyle(color: Colors.white.withOpacity(1.0)),),
-                      color: Colors.blue,
+                      child: Text('Ghi danh',style: TextStyle(color: Colors.black54.withOpacity(1.0)),),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(18.0),
+                        side: BorderSide(color: Colors.greenAccent),
+                      ),
+                      color: Colors.greenAccent,
 
 
                     ),
@@ -589,14 +615,29 @@ class _MyHomePageState extends State<RegisterStudent> {
           dob: dob,
           name: fullName,
           phone:phoneController.text.toString(),
+          phone2:phoneController2.text.toString(),
           address: addressController.text.toString(),
           note: noteController.text.toString(),
           listHP: jsonEncode(_myActivities),
           listca: jsonEncode(listCa),
           listcolor: possion.toString(),
-          time: ""
+          time: formattedDates
       ));
-      print('save thanh cong');
+      AwesomeDialog(
+          context: context,
+          animType: AnimType.LEFTSLIDE,
+          headerAnimationLoop: false,
+          dialogType: DialogType.SUCCES,
+          title: 'Succes',
+          desc:
+          'Ghi danh thành công ..................................................',
+          btnOkOnPress: () {
+            debugPrint('OnClcik');
+          },
+          btnOkIcon: Icons.check_circle,
+          onDissmissCallback: () {
+            debugPrint('Dialog Dissmiss from callback');
+          }).show();
   }
 }
 

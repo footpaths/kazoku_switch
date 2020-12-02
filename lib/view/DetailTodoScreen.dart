@@ -24,9 +24,11 @@ class _CreateTodoState extends State<DetailTodoScreen> {
   final dobTextController = TextEditingController();
   final addressTextController = TextEditingController();
   final phoneTextController = TextEditingController();
+  final phoneTextController2 = TextEditingController();
   final noteTextController = TextEditingController();
   String index;
   bool isListcaStt = false;
+  var times;
 
   _CreateTodoState(this.studentData);
 
@@ -62,8 +64,10 @@ class _CreateTodoState extends State<DetailTodoScreen> {
       nameTextController.text = studentData.name;
       dobTextController.text = studentData.dob;
       phoneTextController.text = studentData.phone;
+      phoneTextController2.text = studentData.phone2;
       addressTextController.text = studentData.address;
       noteTextController.text = studentData.note;
+      times = studentData.time;
       _focus.addListener(_onFocusChange);
       if (studentData.listHP != null) {
         List<dynamic> list = json.decode(studentData.listHP);
@@ -100,6 +104,7 @@ class _CreateTodoState extends State<DetailTodoScreen> {
     nameTextController.dispose();
     dobTextController.dispose();
     phoneTextController.dispose();
+    phoneTextController2.dispose();
     addressTextController.dispose();
     noteTextController.dispose();
   }
@@ -115,6 +120,7 @@ class _CreateTodoState extends State<DetailTodoScreen> {
   final formKey = new GlobalKey<FormState>();
   int possion;
   String status;
+
   _onSelected(int index) {
     setState(() {
       if (!listCa[index].isSelect) {
@@ -249,7 +255,6 @@ class _CreateTodoState extends State<DetailTodoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cập nhật'),
-
       ),
       body: SingleChildScrollView(
           padding: const EdgeInsets.all(12.0),
@@ -314,6 +319,18 @@ class _CreateTodoState extends State<DetailTodoScreen> {
                   height: 10.0,
                 ),
                 TextFormField(
+                  controller: phoneTextController2,
+                  autofocus: false,
+
+                  decoration: InputDecoration(
+                      border: OutlineInputBorder(),
+                      labelText: 'Số điện thoại phụ huynh 2: '),
+                ),
+                SizedBox(
+                  width: double.infinity,
+                  height: 10.0,
+                ),
+                TextFormField(
                   controller: addressTextController,
                   autofocus: false,
                   validator: (value) {
@@ -368,8 +385,7 @@ class _CreateTodoState extends State<DetailTodoScreen> {
                               if (value == null || value.length == 0) {
                                 status = "Chưa có tháng nào được chọn.";
                                 return 'Chưa có tháng nào được chọn.';
-
-                              }else{
+                              } else {
                                 status = "";
                               }
                               return null;
@@ -569,31 +585,30 @@ class _CreateTodoState extends State<DetailTodoScreen> {
           child: Icon(Icons.check),
           onPressed: () async {
             _saveForm();
-            if(status.isNotEmpty){
+            if (status.isNotEmpty) {
               return;
             }
 
             if (_formKey.currentState.validate()) {
-              for(int i = 0; i< listCa.length;i++){
-                if(listCa[i].isSelect){
+              for (int i = 0; i < listCa.length; i++) {
+                if (listCa[i].isSelect) {
                   isListcaStt = true;
                 }
               }
-              if(!isListcaStt){
+              if (!isListcaStt) {
                 return;
               }
               // If the form is valid, display a Snackbar.
               _saveTodo(
-                  nameTextController.text,
-                  dobTextController.text,
-                  phoneTextController.text,
-                  addressTextController.text,
-                  noteTextController.text);
-              setState(() {
-
-              });
+                nameTextController.text,
+                dobTextController.text,
+                phoneTextController.text,
+                phoneTextController2.text,
+                addressTextController.text,
+                noteTextController.text,
+              );
+              setState(() {});
               print('thanh cong');
-
             }
             // _saveTodo(
             //     nameTextController.text,
@@ -601,22 +616,23 @@ class _CreateTodoState extends State<DetailTodoScreen> {
             //     phoneTextController.text,
             //     addressTextController.text,
             //     noteTextController.text);
-
           }),
     );
   }
 
-  _saveTodo(String name, String dob, String phone, String address,
+  _saveTodo(String name, String dob, String phone,String phone2, String address,
       String note) async {
     if (studentData == null) {
-      DatabaseHelper.instance.insertDataStudent(RegisterData(name: name,
+      DatabaseHelper.instance.insertDataStudent(RegisterData(
+          name: name,
           dob: dob,
           phone: phone,
+          phone2: phone2,
           address: address,
           note: note,
           listHP: jsonEncode(_myActivities),
           listcolor: possion.toString(),
-          listca: jsonEncode(listCa)));
+          listca: jsonEncode(listCa),time:times));
       Navigator.pop(context, true);
     } else {
       print('wwww' + possion.toString());
@@ -625,15 +641,14 @@ class _CreateTodoState extends State<DetailTodoScreen> {
           name: name,
           dob: dob,
           phone: phone,
+          phone2: phone2,
           address: address,
           note: note,
           listHP: jsonEncode(_myActivities),
           listcolor: possion.toString(),
-          listca: jsonEncode(listCa)));
+          listca: jsonEncode(listCa),time:times));
       Navigator.pop(context, true);
-      setState(() {
-
-      });
+      setState(() {});
     }
   }
 }

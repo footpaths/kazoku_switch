@@ -22,7 +22,7 @@ class DatabaseHelper {
     return await openDatabase(join(await getDatabasesPath(), databaseName),
         version: 1, onCreate: (Database db, int version) async {
       await db.execute(
-          "CREATE TABLE register(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, dob TEXT,phone TEXT,address TEXT,note TEXT,listHP TEXT, listca TEXT,listcolor TEXT)");
+          "CREATE TABLE register(id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, name TEXT, dob TEXT,phone TEXT,phone2 TEXT,address TEXT,note TEXT,listHP TEXT, listca TEXT,listcolor TEXT,time TEXT)");
     });
   }
 
@@ -44,11 +44,13 @@ class DatabaseHelper {
         dob: maps[i]['dob'],
         name: maps[i]['name'],
         phone: maps[i]['phone'],
+        phone2: maps[i]['phone2'],
         address: maps[i]['address'],
         note: maps[i]['note'],
         listHP: maps[i]['listHP'],
         listca: maps[i]['listca'],
         listcolor: maps[i]['listcolor'],
+        time: maps[i]['time'],
       );
     });
   }

@@ -2,13 +2,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kazoku_switch/helper/DatabaseHelper.dart';
 import 'package:kazoku_switch/model/colorModel.dart';
-import 'package:kazoku_switch/model/month.dart';
-import 'package:kazoku_switch/model/registerData.dart';
-import 'package:multiselect_formfield/multiselect_formfield.dart';
-import 'package:kazoku_switch/model/ca.dart';
+ import 'package:kazoku_switch/model/registerData.dart';
+import 'package:kazoku_switch/view/WriteExcelScreen.dart';
 
 import 'AttendaceScreen.dart';
 import 'DetailTodoScreen.dart';
+import 'FeeScreen.dart';
 
 class ListStudent extends StatefulWidget {
   ListStudent({Key key, this.title}) : super(key: key);
@@ -38,20 +37,23 @@ class _MyHomePageState extends State<ListStudent> {
       _listSearch = value;
     });
   }
+
   getDataTemp(String text) {
     _futureOfList = DatabaseHelper.instance.retrieveDataStudent();
     _futureOfList.then((value) {
-      for(int i = 0; i< value.length;i++){
+      for (int i = 0; i < value.length; i++) {
         RegisterData registerData = new RegisterData();
-        if(value[i].name.toLowerCase().contains(text.toLowerCase())){
+        if (value[i].name.toLowerCase().contains(text.toLowerCase())) {
           registerData.name = value[i].name;
           registerData.dob = value[i].dob;
           registerData.phone = value[i].phone;
+          registerData.phone2 = value[i].phone2;
           registerData.address = value[i].address;
           registerData.note = value[i].note;
           registerData.listHP = value[i].listHP;
           registerData.listcolor = value[i].listcolor;
           registerData.listca = value[i].listca;
+          registerData.time = value[i].time;
           _listSearch.add(registerData);
         }
       }
@@ -59,13 +61,12 @@ class _MyHomePageState extends State<ListStudent> {
       setState(() {});
     });
   }
+
   onSearchTextChanged(String text) async {
     _listSearch.clear();
     if (text.isEmpty) {
       getData();
-      setState(() {
-
-      });
+      setState(() {});
       return;
     }
 
@@ -75,8 +76,8 @@ class _MyHomePageState extends State<ListStudent> {
 
     // });
     getDataTemp(text);
-
   }
+
   void handleClick(String value) {
     switch (value) {
       case 'Điểm danh':
@@ -84,10 +85,14 @@ class _MyHomePageState extends State<ListStudent> {
         _gotoAttendace();
         break;
       case 'Học phí':
-        print(value);
+        _gotoFee();
+        break;
+      case 'Xuất excel':
+        _createExcel();
         break;
     }
   }
+
   @override
   Widget build(BuildContext context) {
     print('quaaaaaa');
@@ -98,7 +103,8 @@ class _MyHomePageState extends State<ListStudent> {
           PopupMenuButton<String>(
             onSelected: handleClick,
             itemBuilder: (BuildContext context) {
-              return {'Điểm danh', 'Học phí'}.map((String choice) {
+              return {'Điểm danh', 'Học phí', 'Xuất excel'}
+                  .map((String choice) {
                 return PopupMenuItem<String>(
                   value: choice,
                   child: Text(choice),
@@ -128,10 +134,8 @@ class _MyHomePageState extends State<ListStudent> {
                         icon: new Icon(Icons.cancel),
                         onPressed: () {
                           controller.clear();
-                         getData();
-                          setState(() {
-
-                          });
+                          getData();
+                          setState(() {});
                         },
                       ),
                     ),
@@ -166,7 +170,6 @@ class _MyHomePageState extends State<ListStudent> {
                                     vertical: 10, horizontal: 8),
                                 child: Row(
                                   children: [
-
                                     Container(
                                       margin: EdgeInsets.only(left: 10.0),
                                       child: Column(
@@ -181,7 +184,7 @@ class _MyHomePageState extends State<ListStudent> {
                                                   _listSearch[index].name,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                                  color: Colors.blueGrey),
                                             ),
                                           ),
                                           SizedBox(height: 3),
@@ -192,7 +195,7 @@ class _MyHomePageState extends State<ListStudent> {
                                                   _listSearch[index].dob,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                                  color: Colors.blueGrey),
                                             ),
                                           ),
                                           SizedBox(height: 3),
@@ -203,7 +206,18 @@ class _MyHomePageState extends State<ListStudent> {
                                                   _listSearch[index].phone,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                                  color: Colors.blueGrey),
+                                            ),
+                                          ),
+                                          SizedBox(height: 3),
+                                          Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Số điện thoại 2: " +
+                                                  _listSearch[index].phone2,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blueGrey),
                                             ),
                                           ),
                                           SizedBox(height: 3),
@@ -214,7 +228,7 @@ class _MyHomePageState extends State<ListStudent> {
                                                   _listSearch[index].address,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                                  color: Colors.blueGrey),
                                             ),
                                           ),
                                           SizedBox(height: 3),
@@ -225,7 +239,18 @@ class _MyHomePageState extends State<ListStudent> {
                                                   _listSearch[index].note,
                                               style: TextStyle(
                                                   fontWeight: FontWeight.bold,
-                                                  color: Colors.black),
+                                                  color: Colors.blueGrey),
+                                            ),
+                                          ),
+                                          SizedBox(height: 3),
+                                          Container(
+                                            alignment: Alignment.topLeft,
+                                            child: Text(
+                                              "Ngày nhập học: " +
+                                                  _listSearch[index].time,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blueGrey),
                                             ),
                                           ),
                                           SizedBox(height: 3),
@@ -241,7 +266,6 @@ class _MyHomePageState extends State<ListStudent> {
                                         ),
                                         onPressed: () async {
                                           _deleteTodo(_listSearch[index]);
-
                                         })
                                   ],
                                 )),
@@ -268,17 +292,33 @@ class _MyHomePageState extends State<ListStudent> {
     getData();
     setState(() {});
   }
-  _gotoAttendace()  {
-      Navigator.push(
+
+  _gotoAttendace() {
+    Navigator.push(
         context,
         new MaterialPageRoute(
-            builder: (BuildContext context) =>
-            new AttendaceScreen(
-            listSearch: _listSearch,
+            builder: (BuildContext context) => new AttendaceScreen(
+                  listSearch: _listSearch,
+                )));
+    //print('aaaajjjjjjj $result');
+  }
+
+  _gotoFee() {
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new FeeScreen(
+                  listSearch: _listSearch,
+                )));
+    //print('aaaajjjjjjj $result');
+  }
+  _createExcel() {
+    Navigator.push(
+        context,
+        new MaterialPageRoute(
+            builder: (BuildContext context) => new WriteExcelScreen(
+              listSearch: _listSearch,
             )));
     //print('aaaajjjjjjj $result');
-
   }
 }
-
-

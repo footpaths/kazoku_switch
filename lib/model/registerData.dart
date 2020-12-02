@@ -3,6 +3,7 @@ class RegisterData {
   String name;
   String dob;
   String phone;
+  String phone2;
   String address;
   String note;
   String listHP;
@@ -16,6 +17,7 @@ class RegisterData {
       this.name,
       this.dob,
       this.phone,
+      this.phone2,
       this.address,
       this.note,
       this.listHP,
@@ -29,6 +31,7 @@ class RegisterData {
       'name': name,
       'dob': dob,
       'phone': phone,
+      'phone2': phone2,
       'address': address,
       'note': note,
       'listHP': listHP,

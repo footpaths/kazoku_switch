@@ -5,5 +5,8 @@ class Month {
 
 
   Month({this.nameMonth, this.isSelect});
-
+  Map toJson() => {
+    'nameMonth': nameMonth,
+  };
+  Month.fromJson(Map<String, dynamic> json): nameMonth = json['nameMonth'];
 }

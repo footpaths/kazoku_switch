@@ -25,6 +25,14 @@ dependencies:
     sdk: flutter
   multiselect_formfield: ^0.1.4
   smart_select: ^4.3.2
+  time_machine: ^0.9.16
+  intl: ^0.16.1
+  url_launcher:
+  flutter_sms: ^2.1.1
+  awesome_dialog: ^1.2.1
+  path_provider: ^1.6.5
+  open_file: ^3.0.1
+  syncfusion_flutter_xlsio: ^18.3.52-beta
   
 
   # The following adds the Cupertino Icons font to your application.
