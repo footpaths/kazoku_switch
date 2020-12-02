@@ -137,7 +137,9 @@ class _MyHomePageState extends State<RegisterStudent> {
   showAlertDialog(BuildContext context, int index) {
     // set up the list options
     Widget optionOne = SimpleDialogOption(
-      child: const Text('Ca 1'),
+      child: const Padding(
+        padding: EdgeInsets.all(2),
+        child: Text('Ca 1',style: TextStyle(fontSize: 16),)),
       onPressed: () {
         setState(() {
           listCa[index].monthName = "Ca 1";
@@ -146,7 +148,7 @@ class _MyHomePageState extends State<RegisterStudent> {
       },
     );
     Widget optionTwo = SimpleDialogOption(
-      child: const Text('Ca 2'),
+      child: const Padding(padding: EdgeInsets.all(2),child: Text('Ca 2',style: TextStyle(fontSize: 16),)),
       onPressed: () {
         print('cow');
         setState(() {
@@ -156,7 +158,7 @@ class _MyHomePageState extends State<RegisterStudent> {
       },
     );
     Widget optionThree = SimpleDialogOption(
-      child: const Text('Ca 3'),
+      child: const  Padding(padding: EdgeInsets.all(2),child: Text('Ca 3',style: TextStyle(fontSize: 16),)),
       onPressed: () {
         print('camel');
         setState(() {
@@ -166,7 +168,7 @@ class _MyHomePageState extends State<RegisterStudent> {
       },
     );
     Widget optionFour = SimpleDialogOption(
-      child: const Text('Ca 4'),
+      child: const Padding(padding: EdgeInsets.all(2),child: Text('Ca 4',style: TextStyle(fontSize: 16),)),
       onPressed: () {
         print('sheep');
         setState(() {
@@ -176,7 +178,7 @@ class _MyHomePageState extends State<RegisterStudent> {
       },
     );
     Widget optionFive = SimpleDialogOption(
-      child: const Text('Ca 5'),
+      child: const Padding(padding: EdgeInsets.all(2),child: Text('Ca 5',style: TextStyle(fontSize: 16),)),
       onPressed: () {
         print('goat');
         setState(() {
@@ -186,7 +188,7 @@ class _MyHomePageState extends State<RegisterStudent> {
       },
     );
     Widget optionSix = SimpleDialogOption(
-      child: const Text('Ca 6'),
+      child: const Padding(padding: EdgeInsets.all(2),child: Text('Ca 6',style: TextStyle(fontSize: 16),)),
       onPressed: () {
         print('goat');
         setState(() {
@@ -349,7 +351,7 @@ class _MyHomePageState extends State<RegisterStudent> {
                               dialogTextStyle:
                                   TextStyle(fontWeight: FontWeight.bold),
                               checkBoxActiveColor: Colors.red,
-                              checkBoxCheckColor: Colors.green,
+                              checkBoxCheckColor: Colors.yellow,
                               dialogShapeBorder: RoundedRectangleBorder(
                                   borderRadius:
                                       BorderRadius.all(Radius.circular(12.0))),
@@ -628,7 +630,7 @@ class _MyHomePageState extends State<RegisterStudent> {
           animType: AnimType.LEFTSLIDE,
           headerAnimationLoop: false,
           dialogType: DialogType.SUCCES,
-          title: 'Succes',
+          title: 'Success',
           desc:
           'Ghi danh thành công ..................................................',
           btnOkOnPress: () {
