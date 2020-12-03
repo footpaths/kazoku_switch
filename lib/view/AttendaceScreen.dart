@@ -26,16 +26,8 @@ class _CreateTodoState extends State<AttendaceScreen> {
   @override
   void initState() {
     super.initState();
-    // getListAttendance(_listSearchs);
-  }
+   }
 
-  // getListAttendance(List<RegisterData> listSearch) {
-  //
-  //   for (int i = 0; i < listSearch.length; i++) {
-  //
-  //
-  //   }
-  // }
   List<String> recipents = ["1234567890", "5556787676"];
   @override
   void dispose() {
@@ -85,10 +77,7 @@ class _CreateTodoState extends State<AttendaceScreen> {
   }
   
   searchFuntion(List<RegisterData> _listSearchs) {
-    // List jsonresponse = json.decode(studentData.listca);
-    //
-    // listCa = jsonresponse.map((job) => new Ca.fromJson(job)).toList();
-    // print('ls' + listCa.toString());
+
     _listSearchTemp.clear();
     for (int i = 0; i < _listSearchs.length; i++) {
       listCa = new List();
@@ -120,20 +109,13 @@ class _CreateTodoState extends State<AttendaceScreen> {
           }
         }
       }
-      // if(listCa[i].monthName == _convertCa()){
-      //
-      // }
+
       setState(() {
         valueTotal = _listSearchTemp.length;
       });
 
     }
-    // setState(() {
-    //   _listSearchTemp = new List();
-    //
-    //   _listSearchTemp =  _listSearch;
-    //   valueTotal = _listSearchTemp.length;
-    // });
+
   }
   void _sendSMS(String message, List<String> recipents) async {
     String _result = await sendSMS(message: message, recipients: recipents)

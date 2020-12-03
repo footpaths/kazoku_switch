@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kazoku_switch/presenter/Presenter.dart';
 import 'package:kazoku_switch/view/HomePage.dart';
+import 'package:kazoku_switch/view/LoginScreen.dart';
 
 void main() {
   runApp(MyApp());
@@ -25,7 +26,8 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.blue,
       ),
-      home: new HomePage(new BasicCounterPresenter(), title: 'Flutter MVP Demo'),
+      // home: new HomePage(new BasicCounterPresenter(), title: 'Flutter MVP Demo'),
+      home: new LoginScreen(new BasicCounterPresenter(), title: 'Flutter MVP Demo'),
     );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kazoku_switch/model/CounterModel.dart';
@@ -217,8 +218,8 @@ class _MyHomePageState extends State<HomePage> implements Counter {
             ),
               child: Card(
                 child: InkWell(
-                  onTap: (){
-                    print('hihihihi');
+                  onTap: () async {
+                    await FirebaseAuth.instance.signOut();
                   },
                   splashColor: Colors.green,
                   child: Center(
@@ -240,36 +241,9 @@ class _MyHomePageState extends State<HomePage> implements Counter {
           ],
         ),
 
-        /*child: Column(
-          children: [
-            Text("HỆ THỐNG GHI DANH!",style: new TextStyle(fontSize: 22.0, color: Colors.green, fontWeight: FontWeight.bold), textAlign: TextAlign.center, ),
-            Container(
-
-
-            )
-
-
-          ],
-        ),*/
-
         alignment: Alignment.center,
         margin: EdgeInsets.only(top: 10.0),
-      ) /*Center(
-        child: new Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              alignment: Alignment.center,
-              color: Colors.purpleAccent,
-              height: double.infinity,
-              child: Text("aaaaaaa"),
-            ),
-
-          ],
-        ),
       )
-*/
     );
   }
 }

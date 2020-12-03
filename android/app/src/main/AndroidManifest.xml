@@ -1,6 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.kazokuswitch.kazoku_switch">
-   <application
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
         android:label="kazoku_switch"
         android:icon="@mipmap/ic_launcher">
         <activity
