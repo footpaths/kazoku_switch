@@ -1,15 +1,18 @@
 import 'dart:convert';
 
 import 'package:awesome_dialog/awesome_dialog.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
 import 'package:intl/intl.dart';
 import 'package:kazoku_switch/helper/DatabaseHelper.dart';
+import 'package:kazoku_switch/helper/multiselect_formfield.dart';
 import 'package:kazoku_switch/model/colorModel.dart';
 import 'package:kazoku_switch/model/month.dart';
 import 'package:kazoku_switch/model/registerData.dart';
-import 'package:multiselect_formfield/multiselect_formfield.dart';
-import 'package:kazoku_switch/model/ca.dart';
+import 'package:kazoku_switch/view/contant.dart';
+ import 'package:kazoku_switch/model/ca.dart';
 // import 'package:time_machine/time_machine.dart';
 
 class RegisterStudent extends StatefulWidget {
@@ -30,6 +33,7 @@ class _MyHomePageState extends State<RegisterStudent> {
   //
   // }
   String formattedDates;
+  List<String> recipents = ["1234567890", "5556787676"];
   @override
   void initState() {
     super.initState();
@@ -227,8 +231,12 @@ class _MyHomePageState extends State<RegisterStudent> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text("Second Route"),
-
+          title: Text("Ghi danh"),
+          centerTitle: true,
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         body: SingleChildScrollView(
             padding: const EdgeInsets.all(12.0),
@@ -539,20 +547,6 @@ class _MyHomePageState extends State<RegisterStudent> {
                                 },
                               );
 
-                              /*Container(
-                                margin: EdgeInsets.all(5.0),
-                                child: Container(
-                                width: 100.0,
-                                  color: colorsModelList[index].colors,
-                              ),
-                              );*/
-                              //   Container(
-                              //     margin: EdgeInsets.all(5.0),
-                              //     child:  Container(
-                              //       width: 100.0,
-                              //       color: colorsModelList[index].colors,
-                              //     )
-                              // );
                             },
                           ),
                         )),
@@ -563,38 +557,39 @@ class _MyHomePageState extends State<RegisterStudent> {
 
                     child: RaisedButton(
 
-                      onPressed: () {
-                        // Validate returns true if the form is valid, or false
-                        // otherwise.
-                        String jsonUser = jsonEncode(listCa);
-                       // String jsoncolof = jsonEncode(colorsModelList);
-                        //print("listtttttt"+jsoncolof);
-                        _saveForm();
-                        if(status.isNotEmpty){
-                          return;
+                      onPressed: () async {
+                        var name  = await Contants.getUserName();
+                        if(name.toString().contains("admin") || name.toString().contains("qc")){
+
+                        }else{
+                          _saveForm();
+                          if(status.isNotEmpty){
+                            return;
+                          }
+
+                          if (_formKey.currentState.validate()) {
+                            // If the form is valid, display a Snackbar.
+                            for(int i = 0; i< listCa.length;i++){
+                              if(listCa[i].isSelect){
+                                isListcaStt = true;
+                              }
+                            }
+                            if(!isListcaStt){
+                              return;
+                            }
+                            for(int i = 0; i< colorsModelList.length;i++){
+                              if(colorsModelList[i].isSelect){
+                                isListColorStt = true;
+                              }
+                            }
+                            if(!isListColorStt){
+                              return;
+                            }
+                            print('aaaaaa ' + fullNameController.text.toString());
+                            _saveTodo(fullNameController.text.toString(),doBController.text.toString());
+                          }
                         }
 
-                        if (_formKey.currentState.validate()) {
-                          // If the form is valid, display a Snackbar.
-                          for(int i = 0; i< listCa.length;i++){
-                            if(listCa[i].isSelect){
-                              isListcaStt = true;
-                            }
-                          }
-                          if(!isListcaStt){
-                            return;
-                          }
-                          for(int i = 0; i< colorsModelList.length;i++){
-                            if(colorsModelList[i].isSelect){
-                              isListColorStt = true;
-                            }
-                          }
-                          if(!isListColorStt){
-                            return;
-                          }
-                          print('aaaaaa ' + fullNameController.text.toString());
-                          _saveTodo(fullNameController.text.toString(),doBController.text.toString());
-                        }
                       },
                       child: Text('Ghi danh',style: TextStyle(color: Colors.black54.withOpacity(1.0)),),
                       shape: RoundedRectangleBorder(
@@ -629,17 +624,31 @@ class _MyHomePageState extends State<RegisterStudent> {
           context: context,
           animType: AnimType.LEFTSLIDE,
           headerAnimationLoop: false,
+          keyboardAware: true,
+          dismissOnBackKeyPress: false,
           dialogType: DialogType.SUCCES,
           title: 'Success',
           desc:
           'Ghi danh thành công ..................................................',
           btnOkOnPress: () {
-            debugPrint('OnClcik');
+            recipents.clear();
+            recipents.add(phoneController.text);
+
+            String message = "CLB Karatedo xác nhận Vsinh: " + fullNameController.text + " đã đăng ký thành công! ";
+            _sendSMS(message, recipents);
           },
           btnOkIcon: Icons.check_circle,
           onDissmissCallback: () {
             debugPrint('Dialog Dissmiss from callback');
           }).show();
+
+  }
+  void _sendSMS(String message, List<String> recipents) async {
+    String _result = await sendSMS(message: message, recipients: recipents)
+        .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
   }
 }
 

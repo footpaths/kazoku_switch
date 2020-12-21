@@ -9,6 +9,7 @@ import 'package:flutter_sms/flutter_sms.dart';
 import 'package:kazoku_switch/model/ca.dart';
 import 'package:kazoku_switch/model/registerData.dart';
 import 'package:kazoku_switch/presenter/Presenter.dart';
+import 'package:kazoku_switch/view/Background.dart';
 import 'package:kazoku_switch/view/HomePage.dart';
 import 'package:kazoku_switch/view/RegisterStudent.dart';
 
@@ -24,6 +25,9 @@ class LoginFormScreen extends StatefulWidget {
 class _CreateTodoState extends State<LoginFormScreen> {
   _CreateTodoState();
 
+  TextEditingController userController = TextEditingController();
+  TextEditingController passController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -34,72 +38,120 @@ class _CreateTodoState extends State<LoginFormScreen> {
     super.dispose();
   }
 
- Future<void> _createUser() async{
-    // try {
-    //    UserCredential userCredential =  await FirebaseAuth.instance.signInAnonymously();
-    // }on FirebaseAuthException catch(e) {
-    //   print('error: $e');
-    // } catch  (e){
-    //   print('error:  $e');
-    // }
-   try {
-     UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-         email: "barryLuan.allen@example.com",
-         password: "SuperSecretPassword!"
-     );
+  var hostEmail = "@gmail.com";
 
-   } on FirebaseAuthException catch (e) {
-     if (e.code == 'weak-password') {
-       print('The password provided is too weak.');
-     } else if (e.code == 'email-already-in-use') {
-       print('The account already exists for that email.');
-     }
-   } catch (e) {
-     print(e);
-   }
- }
- Future<void> _LoginUser() async{
-    // try {
-    //    UserCredential userCredential =  await FirebaseAuth.instance.signInAnonymously();
-    // }on FirebaseAuthException catch(e) {
-    //   print('error: $e');
-    // } catch  (e){
-    //   print('error:  $e');
-    // }
-   try {
-     UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-         email: "test@gmail.com",
-         password: "123456"
-     );
-   } on FirebaseAuthException catch (e) {
-     if (e.code == 'user-not-found') {
-       print('No user found for that email.');
-     } else if (e.code == 'wrong-password') {
-       print('Wrong password provided for that user.');
-     }else if (e.code == 'network-request-failed') {
-       AwesomeDialog(
-           context: context,
-           dialogType: DialogType.ERROR,
-           animType: AnimType.RIGHSLIDE,
-           headerAnimationLoop: false,
-           title: 'Error',
-           desc:
-           'Vui lòng kiểm tra kết nối.....',
-           btnOkOnPress: () {},
-           btnOkIcon: Icons.cancel,
-           btnOkColor: Colors.red).show();
-     }
-   }
- }
+
+
+  Future<void> _LoginUser() async {
+
+    try {
+      var email = userController.text.toString() + hostEmail;
+      var pass = passController.text.toString();
+      UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: pass);
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        _showDialogError("Error", "Tài khoản không tồn tại.");
+      } else if (e.code == 'wrong-password') {
+        _showDialogError("Error", "Mật khẩu không đúng.");
+        print('Wrong password provided for that user.');
+      } else if (e.code == 'network-request-failed') {
+       _showDialogError("Error", "Vui lòng kiểm tra kết nối.....");
+      }
+    }
+  }
+
+  _showDialogError(String title, String desc) {
+    AwesomeDialog(
+            context: context,
+            dialogType: DialogType.ERROR,
+            animType: AnimType.RIGHSLIDE,
+            headerAnimationLoop: false,
+            title: title,
+            desc: desc,
+            btnOkOnPress: () {},
+            btnOkIcon: Icons.cancel,
+            btnOkColor: Colors.red)
+        .show();
+  }
+
+  final _formKey = GlobalKey<FormState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: MaterialButton(
-          child: Text("create new acount"),
-          onPressed: _LoginUser,
-        ),
-      ),
+        resizeToAvoidBottomPadding: false,
+        backgroundColor: Colors.white,
+      body:  Stack(
+        children: <Widget>[
+          Background(),
+          Center(
+              child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Container(
+                        margin: EdgeInsets.all(10.0),
+                        child: TextFormField(
+                          controller: userController,
+                          autofocus: false,
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Tên đăng nhập không được trống!';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Tên đăng nhập: '),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(10.0),
+                        child: TextFormField(
+                          controller: passController,
+                          autofocus: false,
+                          keyboardType: TextInputType.text,
+                          obscureText: true,
+                          validator: (value) {
+                            if (value.isEmpty) {
+                              return 'Mật khẩu không được trống!';
+                            }
+                            return null;
+                          },
+                          decoration: InputDecoration(
+                              border: OutlineInputBorder(),
+                              labelText: 'Mật khẩu: '),
+                        ),
+                      ),
+                      SizedBox(height: 10.0,),
+
+
+                      RaisedButton(
+
+                        onPressed: () {
+
+                          if (_formKey.currentState.validate()) {
+                            // If the form is valid, display a Snackbar.
+                            _LoginUser();
+                          }
+                        },
+                        child: Text('Đăng nhập',style: TextStyle(color: Colors.white.withOpacity(1.0)),),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: new BorderRadius.circular(18.0),
+                          side: BorderSide(color: Colors.cyan),
+                        ),
+                        color: Colors.cyan,
+
+
+                      ),
+                    ],
+                  ))),
+        ],
+      )
+
     );
   }
 }

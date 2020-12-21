@@ -1,11 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_sms/flutter_sms.dart';
+import 'package:intl/intl.dart';
+import 'package:kazoku_switch/helper/multiselect_formfield.dart';
 import 'package:kazoku_switch/model/ca.dart';
 import 'package:kazoku_switch/model/colorModel.dart';
 import 'package:kazoku_switch/model/registerData.dart';
-import 'package:multiselect_formfield/multiselect_formfield.dart';
-import '../helper/DatabaseHelper.dart';
+import 'package:kazoku_switch/view/contant.dart';
+ import '../helper/DatabaseHelper.dart';
 
 class DetailTodoScreen extends StatefulWidget {
   static const routeName = '/detailTodoScreen';
@@ -29,9 +32,9 @@ class _CreateTodoState extends State<DetailTodoScreen> {
   String index;
   bool isListcaStt = false;
   var times;
-
+  var monthFee = List();
   _CreateTodoState(this.studentData);
-
+  List<String> recipents = ["1234567890", "5556787676"];
   List<Ca> listCaTmp = [
     Ca(name: 'T2', isSelect: false, monthName: ""),
     Ca(name: 'T3', isSelect: false, monthName: ""),
@@ -215,6 +218,7 @@ class _CreateTodoState extends State<DetailTodoScreen> {
         optionThree,
         optionFour,
         optionFive,
+        optionSix
       ],
     );
 
@@ -255,6 +259,10 @@ class _CreateTodoState extends State<DetailTodoScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Cập nhật'),
+        leading: new IconButton(
+          icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
       ),
       body: SingleChildScrollView(
           padding: const EdgeInsets.all(12.0),
@@ -458,6 +466,7 @@ class _CreateTodoState extends State<DetailTodoScreen> {
                               if (value == null) return;
                               setState(() {
                                 _myActivities = value;
+
                               });
                             },
                           ),
@@ -608,7 +617,9 @@ class _CreateTodoState extends State<DetailTodoScreen> {
                 noteTextController.text,
               );
               setState(() {});
-              print('thanh cong');
+
+
+
             }
             // _saveTodo(
             //     nameTextController.text,
@@ -619,9 +630,21 @@ class _CreateTodoState extends State<DetailTodoScreen> {
           }),
     );
   }
-
+  void _sendSMS(String message, List<String> recipents) async {
+    String _result = await sendSMS(message: message, recipients: recipents)
+        .catchError((onError) {
+      print(onError);
+    });
+    print(_result);
+  }
   _saveTodo(String name, String dob, String phone,String phone2, String address,
       String note) async {
+
+  var stringFee =   await Contants.getSelect("saveSelect");
+  var fee = stringFee.replaceAll('[', '');
+  var fees = fee.replaceAll(']', '');
+  final now = new DateTime.now();
+  String formatter = DateFormat('yyyy').format(now);
     if (studentData == null) {
       DatabaseHelper.instance.insertDataStudent(RegisterData(
           name: name,
@@ -633,6 +656,17 @@ class _CreateTodoState extends State<DetailTodoScreen> {
           listHP: jsonEncode(_myActivities),
           listcolor: possion.toString(),
           listca: jsonEncode(listCa),time:times));
+
+
+
+      if(fees.toString().isNotEmpty){
+        recipents.clear();
+        recipents.add(phone);
+        String message = "Vsinh: " +name + " đã đóng học phí " + fees + " "+ formatter;
+        await Contants.setSelect("saveSelect");
+        _sendSMS(message, recipents);
+      }
+
       Navigator.pop(context, true);
     } else {
       print('wwww' + possion.toString());
@@ -649,6 +683,16 @@ class _CreateTodoState extends State<DetailTodoScreen> {
           listca: jsonEncode(listCa),time:times));
       Navigator.pop(context, true);
       setState(() {});
+
+      if(fees.toString().isNotEmpty){
+        recipents.clear();
+        recipents.add(phone);
+
+        String message = "Vsinh: " +name + " đã đóng học phí " + fees +" "+ formatter;
+        await Contants.setSelect("saveSelect");
+        _sendSMS(message, recipents);
+      }
+
     }
   }
 }

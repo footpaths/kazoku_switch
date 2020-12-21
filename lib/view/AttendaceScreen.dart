@@ -5,6 +5,7 @@ import 'package:flutter_sms/flutter_sms.dart';
 import 'package:kazoku_switch/model/ca.dart';
 import 'package:kazoku_switch/model/registerData.dart';
 import 'package:kazoku_switch/view/RegisterStudent.dart';
+import 'package:kazoku_switch/view/contant.dart';
 
 class AttendaceScreen extends StatefulWidget {
   static const routeName = '/attendaceScreen';
@@ -20,12 +21,14 @@ class AttendaceScreen extends StatefulWidget {
 class _CreateTodoState extends State<AttendaceScreen> {
   final List<RegisterData> _listSearchs;
   List<RegisterData> _listSearchTemp   = new List();
+   // initially fill it up with false
 
   _CreateTodoState(this._listSearchs);
 
   @override
   void initState() {
     super.initState();
+
    }
 
   List<String> recipents = ["1234567890", "5556787676"];
@@ -40,6 +43,8 @@ class _CreateTodoState extends State<AttendaceScreen> {
   String valueCaConvert = "";
   int valueTotal = 0;
   List<Ca> listCa;
+
+
   _convertCa(){
     if(valueCa == 1){
       valueCaConvert = "Ca 1";
@@ -129,6 +134,11 @@ class _CreateTodoState extends State<AttendaceScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Điểm danh'),
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          centerTitle: true,
         ),
         body: Container(
           child: Column(
@@ -222,7 +232,7 @@ class _CreateTodoState extends State<AttendaceScreen> {
                   color: Colors.greenAccent,
                   padding: EdgeInsets.only(left: 20, right: 20),
                   onPressed: () => {searchFuntion(_listSearchs)},
-                  child: new Text("Tìm Kiếm"),
+                  child: new Text("Tìm Kiếm",style: TextStyle(color: Colors.white),),
                   shape: RoundedRectangleBorder(
                     borderRadius: new BorderRadius.circular(18.0),
                     side: BorderSide(color: Colors.greenAccent),
@@ -236,13 +246,23 @@ class _CreateTodoState extends State<AttendaceScreen> {
                   itemBuilder: (BuildContext context, int index) {
                     return Card(
                       elevation: 10,
+                      color: _listSearchTemp[index].isSelected ?
+                      Colors.red[100] : Colors.white,
                       child: InkWell(
                         onTap: () async {
-                          recipents.clear();
-                          recipents.add(_listSearchTemp[index].phone);
+                          var name  =  await Contants.getUserName();
+                          if(name.toString().contains("admin") || name.toString().contains("qc")){
+                            setState(() {
+                              _listSearchTemp[index].isSelected = true;
+                            });
+                          }else{
+                            recipents.clear();
+                            recipents.add(_listSearchTemp[index].phone);
 
-                          String message = "CLB Karatedo Xin Thông Báo. Vsinh: " + _listSearchTemp[index].name + " Hôm nay vắng mặt. " + "Quý phụ huynh vui lòng xác nhận cho HLV. Xin cảm ơn.";
-                          _sendSMS(message, recipents);
+                            String message = "CLB Karatedo Xin Thông Báo. Vsinh: " + _listSearchTemp[index].name + " Hôm nay vắng mặt. " + "Quý phụ huynh vui lòng xác nhận cho HLV. Xin cảm ơn.";
+                            _sendSMS(message, recipents);
+                          }
+
                         },
                         child: Padding(
                             padding: const EdgeInsets.symmetric(

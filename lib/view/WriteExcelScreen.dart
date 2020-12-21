@@ -30,7 +30,7 @@ class _CreateTodoState extends State<WriteExcelScreen> {
 
   _CreateTodoState(this._listSearchs);
 
-  List<String> columns = ["Tên", "Ngày Vào Học", "Phone", "Ghi chú", "Học phí"];
+
 
   void requestPermission() {
     PermissionHandler().requestPermissions([PermissionGroup.storage]);
@@ -62,6 +62,10 @@ class _CreateTodoState extends State<WriteExcelScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Danh sách nợ phí'),
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
         ),
         body: Container(
             child: Center(

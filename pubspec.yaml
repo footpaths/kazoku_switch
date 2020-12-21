@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  multiselect_formfield: ^0.1.4
+  #  multiselect_formfield: ^0.1.4
   smart_select: ^4.3.2
   time_machine: ^0.9.16
   intl: ^0.16.1
@@ -36,18 +36,30 @@ dependencies:
   ext_storage: ^1.0.3
   permission_handler: 4.4.0
   flutter_share_file: ^1.2.1+6
+  firebase_core: ^0.5.2+1
+  firebase_auth: ^0.18.3+1
+  firebase_database: ^4.3.0
 
-  firebase_core: ^0.5.0
-  firebase_auth: "^0.18.3+1"
+  shared_preferences: ^0.5.12+4
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
+  tiengviet: ^0.4.1
+  cached_network_image: ^2.4.1
+
+
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   sqflite:
   path:
+  flutter_launcher_icons: ^0.8.1
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/logo.jpg"
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
@@ -60,6 +72,9 @@ flutter:
   uses-material-design: true
   assets:
     - assets/imgerror.png
+    - assets/logo.png
+    - assets/logo.jpg
+    - assets/logo_wakai.png
   # To add assets to your application, add an assets section, like this:
   # assets:
   #   - images/a_dot_burr.jpeg

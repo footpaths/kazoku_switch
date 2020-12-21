@@ -8,6 +8,7 @@ import 'package:kazoku_switch/model/ca.dart';
 import 'package:kazoku_switch/model/month.dart';
 import 'package:kazoku_switch/model/registerData.dart';
 import 'package:kazoku_switch/view/RegisterStudent.dart';
+import 'package:kazoku_switch/view/contant.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class FeeScreen extends StatefulWidget {
@@ -67,7 +68,7 @@ class _CreateTodoState extends State<FeeScreen> {
         monthFee = mon.replaceAll("Tháng ", "");
         if (mon == "Nữa tháng" || mon == "Miễn phí") {
         } else {
-          if (month >= int.parse(monthFee)) {
+          if (int.parse(monthFee) < month) {
             RegisterData registerData = new RegisterData();
 
             registerData.id = _listSearchs[i].id;
@@ -129,6 +130,11 @@ class _CreateTodoState extends State<FeeScreen> {
     return Scaffold(
         appBar: AppBar(
           title: Text('Danh sách nợ phí'),
+          leading: new IconButton(
+            icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+            onPressed: () => Navigator.of(context).pop(),
+          ),
+          centerTitle: true,
         ),
         body: Container(
           child: Column(
@@ -136,7 +142,7 @@ class _CreateTodoState extends State<FeeScreen> {
               Container(
                 alignment: Alignment.topRight,
                 child: Text(
-                  "Tổng số: " + _listSearchTemp.length.toString(),
+                  "Số lượng: ${widget.listSearch.length}" + " - Tổng nợ: ${_listSearchTemp.length.toString()}",
                   style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.bold,
@@ -152,11 +158,20 @@ class _CreateTodoState extends State<FeeScreen> {
                       elevation: 10,
                       child: InkWell(
                         onTap: () async {
-                          recipents.clear();
-                          recipents.add(_listSearchTemp[index].phone);
 
-                          String message = "CLB Karatedo Xin Thông Báo. Vsinh: " +_listSearchTemp[index].name + " đã đến hạn thanh toán học phí. " + "Quý phụ huynh vui lòng thanh toán. Xin cảm ơn.";
-                          _sendSMS(message, recipents);
+                          var name  =  await Contants.getUserName();
+                          if(name.toString().contains("admin") || name.toString().contains("qc")){
+                            setState(() {
+
+                            });
+                          }else{
+                            recipents.clear();
+                            recipents.add(_listSearchTemp[index].phone);
+
+                            String message = "CLB Karatedo Xin Thông Báo. Vsinh: " +_listSearchTemp[index].name + " đã đến hạn thanh toán học phí. " + "Quý phụ huynh vui lòng thanh toán. Xin cảm ơn.";
+                            _sendSMS(message, recipents);
+                          }
+
 
                           // if(Platform.isAndroid){
                           //   //FOR Android

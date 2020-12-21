@@ -1,9 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:kazoku_switch/helper/DatabaseHelper.dart';
 import 'package:kazoku_switch/model/colorModel.dart';
- import 'package:kazoku_switch/model/registerData.dart';
+import 'package:kazoku_switch/model/registerData.dart';
 import 'package:kazoku_switch/view/WriteExcelScreen.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tiengviet/tiengviet.dart';
 
 import 'AttendaceScreen.dart';
 import 'DetailTodoScreen.dart';
@@ -30,6 +34,7 @@ class _MyHomePageState extends State<ListStudent> {
   TextEditingController controller = new TextEditingController();
   List<RegisterData> _listSearch = new List();
   List<RegisterData> _listSearchTemp = new List();
+  List<String> list = new List();
 
   getData() {
     _futureOfList = DatabaseHelper.instance.retrieveDataStudent();
@@ -38,12 +43,25 @@ class _MyHomePageState extends State<ListStudent> {
     });
   }
 
+  _ConvertMonth(String month) {
+    var fee = month.replaceAll('[', '');
+    var fees = fee.replaceAll(']', '');
+    var feesa = fees.replaceAll('"', '');
+    return feesa;
+  }
+
+  _convertVietnameToEnglish(String str) {
+    final strs = TiengViet.parse(str);
+    return strs;
+  }
+
   getDataTemp(String text) {
     _futureOfList = DatabaseHelper.instance.retrieveDataStudent();
     _futureOfList.then((value) {
       for (int i = 0; i < value.length; i++) {
         RegisterData registerData = new RegisterData();
-        if (value[i].name.toLowerCase().contains(text.toLowerCase())) {
+        if (_convertVietnameToEnglish(value[i].name.toLowerCase())
+            .contains(text.toLowerCase())) {
           registerData.name = value[i].name;
           registerData.dob = value[i].dob;
           registerData.phone = value[i].phone;
@@ -54,6 +72,7 @@ class _MyHomePageState extends State<ListStudent> {
           registerData.listcolor = value[i].listcolor;
           registerData.listca = value[i].listca;
           registerData.time = value[i].time;
+          registerData.id = value[i].id;
           _listSearch.add(registerData);
         }
       }
@@ -99,6 +118,11 @@ class _MyHomePageState extends State<ListStudent> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Danh sách võ sinh"),
+        leading: new IconButton(
+          icon: new Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.of(context).pop(),
+        ),
+        centerTitle: true,
         actions: <Widget>[
           PopupMenuButton<String>(
             onSelected: handleClick,
@@ -127,7 +151,7 @@ class _MyHomePageState extends State<ListStudent> {
                       title: new TextField(
                         controller: controller,
                         decoration: new InputDecoration(
-                            hintText: 'Search', border: InputBorder.none),
+                            hintText: 'Vui lòng tìm không dấu', border: InputBorder.none),
                         onChanged: onSearchTextChanged,
                       ),
                       trailing: new IconButton(
@@ -141,42 +165,34 @@ class _MyHomePageState extends State<ListStudent> {
                     ),
                     margin: EdgeInsets.all(10.0),
                   ),
+                  Container(
+                    alignment: Alignment.centerRight,
+                    margin: EdgeInsets.only(right: 18.0),
+                    child: Text(
+                      "${_listSearch.length}",
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
+                    ),
+                  ),
                   new Expanded(
                     child: ListView.builder(
                       itemCount: _listSearch.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Card(
-                          elevation: 10,
+                          elevation: 6,
                           child: InkWell(
-                            onTap: () async {
-                              var result = await Navigator.push(
-                                  context,
-                                  new MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          new DetailTodoScreen(
-                                            todo: _listSearch[index],
-                                          )));
-                              //print('aaaajjjjjjj $result');
-                              if (result != null) {
-                                if (result) {
-                                  setState(() {
-                                    getData();
-                                  });
-                                }
-                              }
-                            },
-                            child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 10, horizontal: 8),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      margin: EdgeInsets.only(left: 10.0),
+                            child:   Container(
+                              padding: EdgeInsets.only(left: 15,top: 10,bottom: 10),
+                              child: Row(
+                                children: <Widget>[
+                                  Flexible(
+                                    child: Container(
+
                                       child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: <Widget>[
                                           Container(
                                             alignment: Alignment.topLeft,
                                             child: Text(
@@ -222,6 +238,22 @@ class _MyHomePageState extends State<ListStudent> {
                                           ),
                                           SizedBox(height: 3),
                                           Container(
+                                            alignment: Alignment.centerLeft,
+                                            child: Text(
+                                              "Học phí: " +
+                                                  _ConvertMonth(
+                                                      _listSearch[index]
+                                                          .listHP
+                                                          .toString()),
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.blueGrey),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          SizedBox(height: 3),
+                                          Container(
                                             alignment: Alignment.topLeft,
                                             child: Text(
                                               "Địa chỉ: " +
@@ -256,9 +288,15 @@ class _MyHomePageState extends State<ListStudent> {
                                           SizedBox(height: 3),
                                         ],
                                       ),
-                                    ),
-                                    Spacer(),
-                                    IconButton(
+                                    )
+
+                                  ),
+                                  SizedBox(
+                                    width: 5.0,
+                                  ),
+                                  Container(
+
+                                    child: IconButton(
                                         alignment: Alignment.center,
                                         icon: Icon(
                                           Icons.delete,
@@ -266,12 +304,32 @@ class _MyHomePageState extends State<ListStudent> {
                                         ),
                                         onPressed: () async {
                                           _deleteTodo(_listSearch[index]);
-                                        })
-                                  ],
-                                )),
-                          ),
-                          margin: EdgeInsets.all(10.0),
+                                        }),
+                                  )
+                                ],
+                              ),
+                            ),
+                            onTap: () async {
+                              var result = await Navigator.push(
+                                  context,
+                                  new MaterialPageRoute(
+                                      builder: (BuildContext context) =>
+                                      new DetailTodoScreen(
+                                        todo: _listSearch[index],
+                                      )));
+                              //print('aaaajjjjjjj $result');
+                              if (result != null) {
+                                if (result) {
+                                  setState(() {
+                                    getData();
+                                  });
+                                }
+                              }
+                            },
+                          )
                         );
+
+
                       },
                     ),
                   )
@@ -287,7 +345,14 @@ class _MyHomePageState extends State<ListStudent> {
     );
   }
 
-  _deleteTodo(RegisterData todo) {
+  _deleteTodo(RegisterData todo) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    list = (prefs.getStringList('deletesave') ?? List<String>());
+    var json = jsonEncode(todo.toMap());
+
+    list.add(json);
+
+    await prefs.setStringList("deletesave", list);
     DatabaseHelper.instance.deleteStudent(todo.id);
     getData();
     setState(() {});
@@ -312,13 +377,14 @@ class _MyHomePageState extends State<ListStudent> {
                 )));
     //print('aaaajjjjjjj $result');
   }
+
   _createExcel() {
     Navigator.push(
         context,
         new MaterialPageRoute(
             builder: (BuildContext context) => new WriteExcelScreen(
-              listSearch: _listSearch,
-            )));
+                  listSearch: _listSearch,
+                )));
     //print('aaaajjjjjjj $result');
   }
 }

@@ -11,7 +11,7 @@ class RegisterData {
   String listca;
   String time;
   static const String TABLENAME = "register";
-
+  bool isSelected = false;
   RegisterData(
       {this.id,
       this.name,
@@ -40,6 +40,20 @@ class RegisterData {
       'time': time,
     };
   }
-
+  factory RegisterData.fromJson(Map<String, dynamic> jsonData) {
+    return RegisterData(
+      id: jsonData['id'],
+      name: jsonData['name'],
+      dob: jsonData['dob'],
+      phone: jsonData['phone'],
+      phone2: jsonData['phone2'],
+      address: jsonData['address'],
+      note: jsonData['note'],
+      listHP: jsonData['listHP'],
+      listca: jsonData['listca'],
+      listcolor: jsonData['listcolor'],
+      time: jsonData['time'],
+    );
+  }
 
 }
